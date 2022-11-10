@@ -1,0 +1,25 @@
+version: '3.5'
+
+services:
+  php8.0:
+    container_name: php8.0-dev
+    build:
+      context: .docker/php
+    restart: always
+    ports:
+      - "9000:9000"
+    volumes:
+      - "..:/var/www/app"
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx-dev
+    volumes:
+      - "..:/var/www/app"
+      - .docker/nginx/ebanx-test.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - "80:80"
+    restart: always
+    working_dir: /var/www/app
+    links:
+      - php8.0
