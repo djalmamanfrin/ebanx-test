@@ -2,10 +2,21 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Collection;
+
 class AccountService
 {
     public function getBalance(): int
     {
-        return 0;
+        $transactions = $this->getTransactions();
+        if ($transactions->isEmpty()) {
+            return 0;
+        }
+        return $transactions->pluck('amount')->sum();
+    }
+
+    private function getTransactions(): Collection
+    {
+        return collect();
     }
 }
