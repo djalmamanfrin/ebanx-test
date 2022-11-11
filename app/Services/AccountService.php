@@ -3,22 +3,23 @@
 namespace App\Services;
 
 use App\Models\Account;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Symfony\Component\HttpFoundation\Response;
 
 class AccountService
 {
-    protected Account $account;
+    protected int $accountId;
 
-    public function __construct(Account $account)
+    public function __construct(int $accountId)
     {
-        $this->account = $account;
+        $this->accountId = $accountId;
     }
 
-    public function getBalance(): int
+    public function get(): Account
     {
-        $transactions = $this->account->transactions()->get();
-        if ($transactions->isEmpty()) {
-            return 0;
-        }
-        return $transactions->pluck('amount')->sum();
+        return Account::query()->findOr($this->accountId, function () {
+            $message = "Account {$this->accountId} not found";
+            throw new ModelNotFoundException($message, Response::HTTP_UNPROCESSABLE_ENTITY);
+        });
     }
 }
