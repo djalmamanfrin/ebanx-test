@@ -8,11 +8,6 @@ use Tests\TestCase;
 
 class AccountServiceTest extends TestCase
 {
-    public function test_account_service_class_exists()
-    {
-        $this->assertFileExists(base_path('app/Services/AccountService.php'));
-    }
-
     /**
      * @depends test_account_service_class_exists
      */
