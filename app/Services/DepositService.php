@@ -3,10 +3,6 @@
 namespace App\Services;
 
 use App\Models\Account;
-use App\Models\Type;
-use App\TypesEnum;
-use InvalidArgumentException;
-use Symfony\Component\HttpFoundation\Response;
 
 class DepositService
 {
@@ -18,11 +14,16 @@ class DepositService
     public function __construct(Account $account, float $amount)
     {
         $this->account = $account;
-        $this->amount = $amount;
+        $this->setAmount($amount);
     }
 
     private function isTheMinimumAllowed(float $amount): bool
     {
         return $amount >= self::MINIMUM_ALLOWED_VALUE;
+    }
+
+    private function setAmount(float $amount): void
+    {
+        $this->amount = $amount;
     }
 }
