@@ -13,4 +13,9 @@ class AccountFactory extends Factory
      * @var string
      */
     protected $model = Account::class;
+
+    public function definition()
+    {
+        return [];
+    }
 }

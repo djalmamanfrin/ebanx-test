@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Account;
 use App\Models\Event;
 use App\Models\Transaction;
 use App\Models\Type;
@@ -24,8 +25,8 @@ class TransactionFactory extends Factory
     public function definition()
     {
         return [
-            'event_id' => self::factoryForModel(Event::class)->create(),
-            'account_id' => self::factoryForModel(Transaction::class)->create(),
+            'event_id' => Event::factory()->make()->id,
+            'account_id' => Account::factory()->make()->id,
             'type_id' => $this->faker->numberBetween(1, 3),
             'amount' => $this->faker->numberBetween(10, 100)
         ];
