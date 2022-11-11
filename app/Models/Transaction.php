@@ -4,14 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Transaction extends Model
 {
     protected $table = 'transactions';
 
     protected $fillable = [
-        'account_id', 'type', 'origin', 'destination', 'amount'
+        'event_id', 'account_id', 'type_id', 'amount'
     ];
 
     public function account(): BelongsTo
@@ -19,4 +18,13 @@ class Transaction extends Model
         return $this->belongsTo(Account::class);
     }
 
+    public function event(): BelongsTo
+    {
+        return $this->belongsTo(Event::class);
+    }
+
+    public function type(): BelongsTo
+    {
+        return $this->belongsTo(Type::class);
+    }
 }
