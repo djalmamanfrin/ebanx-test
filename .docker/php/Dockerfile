@@ -40,7 +40,7 @@ RUN pecl install xdebug-3.1.5 && docker-php-ext-enable xdebug \
     && echo "xdebug.idekey=PHPSTORM" >> /usr/local/etc/php/php.ini \
     && echo "xdebug.start_with_request=yes" >> /usr/local/etc/php/php.ini \
     && echo "xdebug.mode=develop,debug,coverage" >> /usr/local/etc/php/php.ini \
-    && echo "xdebug.remote_log=/tmp/xdebug.log" >> /usr/local/etc/php/php.ini
+    && echo "xdebug.log=/tmp/xdebug.log" >> /usr/local/etc/php/php.ini
 
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
