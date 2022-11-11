@@ -8,9 +8,10 @@ use Tests\TestCase;
 
 class DepositServiceTest extends TestCase
 {
-    public function test_is_the_minimum_allowed_method_exist()
+    public function test_methods_exist_in_deposit_service()
     {
         $this->assertTrue(method_exists(DepositService::class, 'isTheMinimumAllowed'));
+        $this->assertTrue(method_exists(DepositService::class, 'setAmount'));
     }
 
     /**
