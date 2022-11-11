@@ -2,6 +2,7 @@
 
 namespace Tests\Services;
 
+use App\Models\Account;
 use App\Services\AccountService;
 use Tests\TestCase;
 
@@ -30,6 +31,7 @@ class AccountServiceTest extends TestCase
 
     public function account(): array
     {
-        return [[new AccountService()]];
+        $account = new Account();
+        return [[new AccountService($account)]];
     }
 }
