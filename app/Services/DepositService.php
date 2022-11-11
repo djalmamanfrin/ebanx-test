@@ -20,4 +20,9 @@ class DepositService
         $this->account = $account;
         $this->amount = $amount;
     }
+
+    private function isTheMinimumAllowed(float $amount): bool
+    {
+        return $amount >= self::MINIMUM_ALLOWED_VALUE;
+    }
 }
