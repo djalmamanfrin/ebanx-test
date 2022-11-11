@@ -1,0 +1,33 @@
+<?php
+
+namespace Database\Factories;
+
+use App\Models\Event;
+use App\Models\Transaction;
+use App\Models\Type;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+class TransactionFactory extends Factory
+{
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = Transaction::class;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition()
+    {
+        return [
+            'event_id' => self::factoryForModel(Event::class)->create(),
+            'account_id' => self::factoryForModel(Transaction::class)->create(),
+            'type_id' => $this->faker->numberBetween(1, 3),
+            'amount' => $this->faker->numberBetween(10, 100)
+        ];
+    }
+}
