@@ -16,6 +16,8 @@ class AccountFactory extends Factory
 
     public function definition()
     {
-        return [];
+        return [
+            'owner' => $this->faker->name
+        ];
     }
 }

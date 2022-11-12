@@ -16,6 +16,7 @@ return new class extends Migration
     {
         Schema::create('accounts', function (Blueprint $table) {
             $table->id();
+            $table->string('owner');
             $table->timestamps();
         });
     }

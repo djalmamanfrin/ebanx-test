@@ -22,10 +22,11 @@ class EventFactory extends Factory
      */
     public function definition()
     {
-        $types = Type::all()->pluck('slug')->toArray();
+        $types = ['deposit', 'withdraw', 'tranfer'];
+        $key = array_rand($types);
         return [
             'payload' => [
-                'type' => $this->faker->randomElement($types),
+                'type' => $types[$key],
                 'origin'=> $this->faker->numberBetween(1, 10),
                 'destination'=> $this->faker->numberBetween(1, 10),
                 'amount' => $this->faker->numberBetween(10, 100),
