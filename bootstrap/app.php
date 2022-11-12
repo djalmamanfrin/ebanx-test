@@ -28,19 +28,6 @@ $app = new Laravel\Lumen\Application(
 
 /*
 |--------------------------------------------------------------------------
-| Register Config Files
-|--------------------------------------------------------------------------
-|
-| Now we will register the "app" configuration file. If the file exists in
-| your configuration directory it will be loaded; otherwise, we'll load
-| the default version. You may register other files below as needed.
-|
-*/
-
-$app->configure('database');
-
-/*
-|--------------------------------------------------------------------------
 | Register Container Bindings
 |--------------------------------------------------------------------------
 |
@@ -71,7 +58,7 @@ $app->singleton(
 |
 */
 
-$app->configure('app');
+$app->configure('database');
 
 /*
 |--------------------------------------------------------------------------
