@@ -41,4 +41,10 @@ class WithdrawServiceTest extends TestCase
         $amount = 0;
         $this->assertIsBool($this->withdraw->hasFound($amount));
     }
+
+    public function test_whether_has_found_method_is_false_when_amount_greater_than_balance()
+    {
+        $amount = 1;
+        $this->assertFalse($this->withdraw->hasFound($amount));
+    }
 }
