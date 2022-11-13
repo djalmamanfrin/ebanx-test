@@ -7,4 +7,10 @@ use App\Traits\CheckBalance;
 class WithdrawService extends TransactionService
 {
     use CheckBalance;
+
+    public function persist(): bool
+    {
+        $this->checkingHasFund();
+        return parent::persist();
+    }
 }

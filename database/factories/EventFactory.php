@@ -31,7 +31,7 @@ class EventFactory extends Factory
             'type' => $type,
             'origin' => $this->faker->numberBetween(1, 10),
             'destination' => $destination,
-            'amount' => $this->faker->numberBetween(10, 100)
+            'amount' => $this->faker->randomFloat(2, 10, 100)
         ];
     }
 }

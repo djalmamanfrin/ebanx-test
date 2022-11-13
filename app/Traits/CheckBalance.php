@@ -2,12 +2,18 @@
 
 namespace App\Traits;
 
+use InvalidArgumentException;
+
 trait CheckBalance
 {
-    public function hasFund(float $amount): bool
+    public function checkingHasFund(): void
     {
-        $this->checkingMinimumAllowed($amount);
+        $this->checkingMinimumAllowed();
         $balance = $this->account->getBalance();
-        return $balance >= $amount;
+        $transactionAmount = $this->amount;
+        if ($balance < $transactionAmount) {
+            $message = "The amount %s informed is greater than balance %s in account";
+            throw new InvalidArgumentException(sprintf($message, $transactionAmount, $balance));
+        }
     }
 }

@@ -15,23 +15,25 @@ abstract class TransactionService
 
     protected Account $account;
     protected Event $event;
+    protected float $amount;
 
     public function __construct(Account $account, Event $event)
     {
         $this->account = $account;
         $this->event = $event;
+        $this->amount = $this->event->getAmount();
     }
 
-    private function isTheMinimumAllowed(float $amount): bool
+    private function isTheMinimumAllowed(): bool
     {
-        return $amount >= self::MINIMUM_ALLOWED_VALUE;
+        return $this->amount >= self::MINIMUM_ALLOWED_VALUE;
     }
 
-    public function checkingMinimumAllowed(float $amount): void
+    public function checkingMinimumAllowed(): void
     {
-        if (!$this->isTheMinimumAllowed($amount)) {
-            $message = "The amount informed must be greater than or equal to" . self::MINIMUM_ALLOWED_VALUE;
-            throw new InvalidArgumentException($message);
+        if (!$this->isTheMinimumAllowed()) {
+            $message = "The amount %s informed must be greater than or equal to %s";
+            throw new InvalidArgumentException(sprintf($message, $this->amount, self::MINIMUM_ALLOWED_VALUE));
         }
     }
 
@@ -40,8 +42,7 @@ abstract class TransactionService
      */
     public function persist(): bool
     {
-        $amount = $this->event->amount;
-        $this->checkingMinimumAllowed($amount);
+        $this->checkingMinimumAllowed();
         try {
             DB::beginTransaction();
             if (is_null($this->account->id)) {
@@ -56,7 +57,7 @@ abstract class TransactionService
                 'type_id' => TypesEnum::DEPOSIT_ID,
                 'account_id' => $this->account->id,
                 'event_id' => $this->event->id,
-                'amount' => $amount
+                'amount' => $this->amount
             ];
             return $this->account->transactions()
                 ->make($attributes)
