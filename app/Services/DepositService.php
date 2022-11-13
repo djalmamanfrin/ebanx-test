@@ -2,8 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\Account;
-use App\Models\Event;
 use App\TypesEnum;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
@@ -11,13 +9,6 @@ use Throwable;
 
 class DepositService extends TransactionService
 {
-    const MINIMUM_ALLOWED_VALUE = 1;
-
-    private function isTheMinimumAllowed(float $amount): bool
-    {
-        return $amount >= self::MINIMUM_ALLOWED_VALUE;
-    }
-
     public function setAmount(float $amount): DepositService
     {
         $this->amount = $amount;

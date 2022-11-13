@@ -11,6 +11,8 @@ use Throwable;
 
 abstract class TransactionService
 {
+    const MINIMUM_ALLOWED_VALUE = 1;
+
     protected Account $account;
     protected Event $event;
     protected float $amount;
@@ -20,5 +22,10 @@ abstract class TransactionService
         $this->account = $account;
         $this->event = $event;
         $this->amount = 0;
+    }
+
+    protected function isTheMinimumAllowed(float $amount): bool
+    {
+        return $amount >= self::MINIMUM_ALLOWED_VALUE;
     }
 }
