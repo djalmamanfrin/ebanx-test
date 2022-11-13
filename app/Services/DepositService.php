@@ -13,17 +13,6 @@ class DepositService extends TransactionService
 {
     const MINIMUM_ALLOWED_VALUE = 1;
 
-    private Account $account;
-    private Event $event;
-    private float $amount;
-
-    public function __construct(Account $account, Event $event)
-    {
-        $this->account = $account;
-        $this->event = $event;
-        $this->amount = 0;
-    }
-
     private function isTheMinimumAllowed(float $amount): bool
     {
         return $amount >= self::MINIMUM_ALLOWED_VALUE;
