@@ -12,6 +12,7 @@ use InvalidArgumentException;
  * @property-read int $id
  * @property-read  float $amount
  * @property-read  int $origin
+ * @property-read  int $destination
  */
 class Event extends Model
 {
