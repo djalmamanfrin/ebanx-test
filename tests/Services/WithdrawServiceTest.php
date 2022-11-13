@@ -53,13 +53,13 @@ class WithdrawServiceTest extends TestCase
         $this->assertIsBool($this->withdraw->hasFound($amount));
     }
 
-    public function test_whether_has_found_method_is_false_when_amount_greater_than_balance()
+    public function test_whether_has_found_method_return_false_when_amount_greater_than_balance()
     {
         $amount = 1;
         $this->assertFalse($this->withdraw->hasFound($amount));
     }
 
-    public function test_whether_has_found_method_is_true_when_amount_less_than_balance()
+    public function test_whether_has_found_method_return_true_when_amount_less_than_balance()
     {
         $amount = 8;
         $event = Event::factory()->create(['type' => 'deposit', 'origin' => $this->account->id]);
@@ -68,7 +68,7 @@ class WithdrawServiceTest extends TestCase
         $this->assertTrue($this->withdraw->hasFound($amount));
     }
 
-    public function test_whether_has_found_method_is_true_when_amount_equal_to_balance()
+    public function test_whether_has_found_method_return_true_when_amount_equal_to_balance()
     {
         $amount = 10;
         $event = Event::factory()->create(['type' => TypesEnum::deposit(), 'origin' => $this->account->id]);
