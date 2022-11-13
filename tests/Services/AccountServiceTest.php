@@ -5,11 +5,15 @@ namespace Tests\Services;
 use App\Models\Account;
 use App\Services\AccountService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Laravel\Lumen\Testing\DatabaseMigrations;
+use Laravel\Lumen\Testing\DatabaseTransactions;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 
 class AccountServiceTest extends TestCase
 {
+    use DatabaseMigrations;
+
     public function test_get_balance_method_exists()
     {
         $this->assertTrue(method_exists(AccountService::class, 'get'));
@@ -17,7 +21,7 @@ class AccountServiceTest extends TestCase
 
     public function test_return_get_balance_method_must_be_int()
     {
-        $account = Account::factory()->make();
+        $account = new Account();
         $this->assertIsInt($account->getBalance());
     }
 
