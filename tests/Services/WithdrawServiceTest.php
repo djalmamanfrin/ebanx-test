@@ -31,7 +31,6 @@ class WithdrawServiceTest extends TestCase
     public function test_whether_abstract_transaction_service_methods_are_available_in_the_withdraw_service()
     {
         $this->assertTrue(method_exists(WithdrawService::class, 'checkingMinimumAllowed'));
-        $this->assertTrue(method_exists(WithdrawService::class, 'setAmount'));
         $this->assertTrue(method_exists(WithdrawService::class, 'persist'));
     }
 
@@ -65,7 +64,7 @@ class WithdrawServiceTest extends TestCase
         $amount = 8;
         $event = Event::factory()->create(['type' => 'deposit', 'origin' => $this->account->id]);
         $deposit = new DepositService($this->account, $event);
-        $deposit->setAmount($amount)->persist();
+        $deposit->persist();
         $this->assertTrue($this->withdraw->hasFound($amount));
     }
 
@@ -74,7 +73,7 @@ class WithdrawServiceTest extends TestCase
         $amount = 10;
         $event = Event::factory()->create(['type' => TypesEnum::deposit(), 'origin' => $this->account->id]);
         $deposit = new DepositService($this->account, $event);
-        $deposit->setAmount($amount)->persist();
+        $deposit->persist();
         $this->assertTrue($this->withdraw->hasFound($amount));
     }
 }

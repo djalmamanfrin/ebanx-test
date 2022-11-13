@@ -6,6 +6,7 @@ use App\Models\Account;
 use App\Models\Event;
 use App\Services\DepositService;
 use App\Services\TransactionService;
+use App\TypesEnum;
 use InvalidArgumentException;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 use Laravel\Lumen\Testing\DatabaseTransactions;
@@ -28,7 +29,6 @@ class DepositServiceTest extends TestCase
     public function test_whether_abstract_transaction_service_methods_are_available_in_the_deposit_service()
     {
         $this->assertTrue(method_exists(DepositService::class, 'checkingMinimumAllowed'));
-        $this->assertTrue(method_exists(DepositService::class, 'setAmount'));
         $this->assertTrue(method_exists(DepositService::class, 'persist'));
     }
 
@@ -65,24 +65,28 @@ class DepositServiceTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $message = "The amount informed must be greater than or equal to" . TransactionService::MINIMUM_ALLOWED_VALUE;
         $this->expectExceptionMessage($message);
-        $this->deposit
-            ->setAmount(0)
-            ->persist();
+
+        $account = Account::factory()->create();
+        $event = Event::factory()->create(['type' => 'deposit', 'origin' => $account->id, 'amount' => 0]);
+        $deposit = new DepositService($account, $event);
+        $deposit->persist();
     }
 
     public function test_success_in_depositing_value_is_equal_one()
     {
-        $isDeposited = $this->deposit
-            ->setAmount(1)
-            ->persist();
+        $account = Account::factory()->create();
+        $event = Event::factory()->create(['type' => 'deposit', 'origin' => $account->id, 'amount' => 1]);
+        $deposit = new DepositService($account, $event);
+        $isDeposited = $deposit->persist();
         $this->assertTrue($isDeposited);
     }
 
     public function test_success_in_depositing_value_is_greater_than_one()
     {
-        $isDeposited = $this->deposit
-            ->setAmount(2)
-            ->persist();
+        $account = Account::factory()->create();
+        $event = Event::factory()->create(['type' => 'deposit', 'origin' => $account->id, 'amount' => 2]);
+        $deposit = new DepositService($account, $event);
+        $isDeposited = $deposit->persist();
         $this->assertTrue($isDeposited);
     }
 }

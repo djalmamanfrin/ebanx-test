@@ -15,13 +15,11 @@ abstract class TransactionService
 
     protected Account $account;
     protected Event $event;
-    protected float $amount;
 
     public function __construct(Account $account, Event $event)
     {
         $this->account = $account;
         $this->event = $event;
-        $this->amount = 0;
     }
 
     private function isTheMinimumAllowed(float $amount): bool
@@ -37,18 +35,12 @@ abstract class TransactionService
         }
     }
 
-    public function setAmount(float $amount): TransactionService
-    {
-        $this->amount = $amount;
-        return $this;
-    }
-
     /**
      * @throws Throwable
      */
     public function persist(): bool
     {
-        $amount = $this->amount;
+        $amount = $this->event->amount;
         $this->checkingMinimumAllowed($amount);
         try {
             DB::beginTransaction();
