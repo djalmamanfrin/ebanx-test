@@ -12,4 +12,9 @@ class TransferServiceTest extends TestCase
         $this->assertTrue(method_exists(TransferService::class, 'checkingMinimumAllowed'));
         $this->assertTrue(method_exists(TransferService::class, 'persist'));
     }
+
+    public function test_whether_has_found_method_is_available_in_the_withdraw_service()
+    {
+        $this->assertTrue(method_exists(TransferService::class, 'hasFound'));
+    }
 }
