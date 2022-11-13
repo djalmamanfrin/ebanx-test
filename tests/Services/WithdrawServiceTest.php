@@ -2,12 +2,12 @@
 
 namespace Tests\Services;
 
+use App\Enums\TypesEnum;
 use App\Models\Account;
 use App\Models\Event;
 use App\Services\DepositService;
 use App\Services\TransactionService;
 use App\Services\WithdrawService;
-use App\TypesEnum;
 use InvalidArgumentException;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 use Laravel\Lumen\Testing\DatabaseTransactions;

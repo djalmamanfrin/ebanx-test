@@ -2,9 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Enums\TypesEnum;
 use App\Models\Event;
-use App\Models\Type;
-use App\TypesEnum;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class EventFactory extends Factory
