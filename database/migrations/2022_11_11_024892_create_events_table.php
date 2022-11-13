@@ -16,7 +16,10 @@ return new class extends Migration
     {
         Schema::create('events', function (Blueprint $table) {
             $table->id();
-            $table->json('payload');
+            $table->string('type');
+            $table->integer('origin');
+            $table->integer('destination')->nullable();
+            $table->float('amount', 10);
             $table->timestamps();
         });
     }

@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Event;
 use App\Models\Type;
+use App\TypesEnum;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class EventFactory extends Factory
@@ -22,15 +23,16 @@ class EventFactory extends Factory
      */
     public function definition()
     {
-        $types = ['deposit', 'withdraw', 'tranfer'];
-        $key = array_rand($types);
+        $type = $this->faker->randomElement(TypesEnum::slugs());
+        $destination = $type !== TypesEnum::deposit()
+            ? $this->faker->numberBetween(1, 10)
+            : null;
+
         return [
-            'payload' => [
-                'type' => $types[$key],
-                'origin'=> $this->faker->numberBetween(1, 10),
-                'destination'=> $this->faker->numberBetween(1, 10),
-                'amount' => $this->faker->numberBetween(10, 100),
-            ]
+            'type' => $type,
+            'origin' => $this->faker->numberBetween(1, 10),
+            'destination' => $destination,
+            'amount' => $this->faker->numberBetween(10, 100)
         ];
     }
 }
