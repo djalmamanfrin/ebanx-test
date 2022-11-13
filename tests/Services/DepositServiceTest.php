@@ -25,7 +25,7 @@ class DepositServiceTest extends TestCase
         $this->deposit = new DepositService($account, $event);
     }
 
-    public function test_methods_exist_in_deposit_service()
+    public function test_whether_abstract_transaction_service_methods_are_available_in_the_deposit_service()
     {
         $this->assertTrue(method_exists(DepositService::class, 'isTheMinimumAllowed'));
         $this->assertTrue(method_exists(DepositService::class, 'setAmount'));

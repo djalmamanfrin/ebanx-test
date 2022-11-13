@@ -13,7 +13,7 @@ use Tests\TestCase;
 
 class WithdrawServiceTest extends TestCase
 {
-    public function test_methods_exist_in_deposit_service()
+    public function test_whether_abstract_transaction_service_methods_are_available_in_the_withdraw_service()
     {
         $this->assertTrue(method_exists(TransactionService::class, 'isTheMinimumAllowed'));
         $this->assertTrue(method_exists(TransactionService::class, 'setAmount'));
