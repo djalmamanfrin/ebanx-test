@@ -15,4 +15,24 @@ class TypesEnum
         $reflector = new ReflectionClass(__CLASS__);
         return $reflector->getConstants();
     }
+
+    public static function slugs(): array
+    {
+        return ['deposit', 'withdraw', 'transfer'];
+    }
+
+    public static function deposit(): string
+    {
+        return 'deposit';
+    }
+
+    public static function withdraw(): string
+    {
+        return 'withdraw';
+    }
+
+    public static function transfer(): string
+    {
+        return 'transfer';
+    }
 }
