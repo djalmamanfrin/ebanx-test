@@ -36,7 +36,7 @@ class TransferServiceTest extends TestCase
 
     public function test_whether_has_found_method_is_available_in_the_transfer_service()
     {
-        $this->assertTrue(method_exists(TransferService::class, 'hasFound'));
+        $this->assertTrue(method_exists(TransferService::class, 'hasFund'));
     }
 
     public function test_expecting_error_in_has_found_method_whether_amount_less_than_minimum_allowed()
@@ -44,19 +44,19 @@ class TransferServiceTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $message = "The amount informed must be greater than or equal to" . TransactionService::MINIMUM_ALLOWED_VALUE;
         $this->expectExceptionMessage($message);
-        $this->transfer->hasFound(0);
+        $this->transfer->hasFund(0);
     }
 
     public function test_if_has_found_method_return_type_is_boolean()
     {
         $amount = 1;
-        $this->assertIsBool($this->transfer->hasFound($amount));
+        $this->assertIsBool($this->transfer->hasFund($amount));
     }
 
     public function test_if_has_found_method_return_false_when_amount_greater_than_minimum_allowed()
     {
         $amount = 1;
-        $this->assertFalse($this->transfer->hasFound($amount));
+        $this->assertFalse($this->transfer->hasFund($amount));
     }
 
     public function test_if_has_found_method_return_true_when_amount_less_than_minimum_allowed()
@@ -65,7 +65,7 @@ class TransferServiceTest extends TestCase
         $event = Event::factory()->create(['type' => TypesEnum::deposit(), 'origin' => $this->account->id]);
         $deposit = new DepositService($this->account, $event);
         $deposit->persist();
-        $this->assertTrue($this->transfer->hasFound($amount));
+        $this->assertTrue($this->transfer->hasFund($amount));
     }
 
     public function test_if_has_found_method_return_true_when_amount_equal_to_minimum_allowed()
@@ -74,6 +74,6 @@ class TransferServiceTest extends TestCase
         $event = Event::factory()->create(['type' => TypesEnum::deposit(), 'origin' => $this->account->id]);
         $deposit = new DepositService($this->account, $event);
         $deposit->persist();
-        $this->assertTrue($this->transfer->hasFound($amount));
+        $this->assertTrue($this->transfer->hasFund($amount));
     }
 }

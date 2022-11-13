@@ -11,6 +11,7 @@ use App\Services\WithdrawService;
 use InvalidArgumentException;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 use Laravel\Lumen\Testing\DatabaseTransactions;
+use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 
 class WithdrawServiceTest extends TestCase
@@ -36,7 +37,7 @@ class WithdrawServiceTest extends TestCase
 
     public function test_whether_has_found_method_is_available_in_the_withdraw_service()
     {
-        $this->assertTrue(method_exists(WithdrawService::class, 'hasFound'));
+        $this->assertTrue(method_exists(WithdrawService::class, 'hasFund'));
     }
 
     public function test_expecting_error_in_has_found_method_whether_amount_less_than_minimum_allowed()
@@ -44,36 +45,36 @@ class WithdrawServiceTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $message = "The amount informed must be greater than or equal to" . TransactionService::MINIMUM_ALLOWED_VALUE;
         $this->expectExceptionMessage($message);
-        $this->withdraw->hasFound(0);
+        $this->withdraw->hasFund(0);
     }
 
     public function test_if_has_found_method_return_type_is_boolean()
     {
         $amount = 1;
-        $this->assertIsBool($this->withdraw->hasFound($amount));
+        $this->assertIsBool($this->withdraw->hasFund($amount));
     }
 
-    public function test_if_has_found_method_return_false_when_amount_greater_than_minimum_allowed()
+    public function test_if_has_found_method_return_false_when_amount_greater_than_balance()
     {
         $amount = 1;
-        $this->assertFalse($this->withdraw->hasFound($amount));
+        $this->assertFalse($this->withdraw->hasFund($amount));
     }
 
-    public function test_if_has_found_method_return_true_when_amount_less_than_minimum_allowed()
+    public function test_if_has_found_method_return_true_when_amount_less_than_balance()
     {
         $amount = 8;
         $event = Event::factory()->create(['type' => TypesEnum::deposit(), 'origin' => $this->account->id]);
         $deposit = new DepositService($this->account, $event);
         $deposit->persist();
-        $this->assertTrue($this->withdraw->hasFound($amount));
+        $this->assertTrue($this->withdraw->hasFund($amount));
     }
 
-    public function test_if_has_found_method_return_true_when_amount_equal_to_minimum_allowed()
+    public function test_if_has_found_method_return_true_when_amount_equal_to_balance()
     {
         $amount = 10;
         $event = Event::factory()->create(['type' => TypesEnum::deposit(), 'origin' => $this->account->id]);
         $deposit = new DepositService($this->account, $event);
         $deposit->persist();
-        $this->assertTrue($this->withdraw->hasFound($amount));
+        $this->assertTrue($this->withdraw->hasFund($amount));
     }
 }

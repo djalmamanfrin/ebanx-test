@@ -4,7 +4,7 @@ namespace App\Traits;
 
 trait CheckBalance
 {
-    public function hasFound(float $amount): bool
+    public function hasFund(float $amount): bool
     {
         $this->checkingMinimumAllowed($amount);
         $balance = $this->account->getBalance();
