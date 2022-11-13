@@ -5,6 +5,7 @@ namespace Tests\Services;
 use App\Models\Account;
 use App\Models\Event;
 use App\Services\DepositService;
+use App\Services\TransactionService;
 use InvalidArgumentException;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 use Laravel\Lumen\Testing\DatabaseTransactions;
@@ -62,7 +63,7 @@ class DepositServiceTest extends TestCase
     public function test_error_in_depositing_value_is_equal_zero()
     {
         $this->expectException(InvalidArgumentException::class);
-        $message = "The deposit amount informed must be greater than or equal to" . DepositService::MINIMUM_ALLOWED_VALUE;
+        $message = "The deposit amount informed must be greater than or equal to" . TransactionService::MINIMUM_ALLOWED_VALUE;
         $this->expectExceptionMessage($message);
         $this->deposit
             ->setAmount(0)

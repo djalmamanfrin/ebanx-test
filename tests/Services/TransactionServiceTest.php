@@ -16,5 +16,6 @@ class TransactionServiceTest extends TestCase
     public function test_methods_exist_in_deposit_service()
     {
         $this->assertTrue(method_exists(TransactionService::class, 'isTheMinimumAllowed'));
+        $this->assertTrue(method_exists(TransactionService::class, 'setAmount'));
     }
 }

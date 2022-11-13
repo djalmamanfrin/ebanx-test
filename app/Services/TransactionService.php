@@ -28,4 +28,10 @@ abstract class TransactionService
     {
         return $amount >= self::MINIMUM_ALLOWED_VALUE;
     }
+
+    public function setAmount(float $amount): TransactionService
+    {
+        $this->amount = $amount;
+        return $this;
+    }
 }

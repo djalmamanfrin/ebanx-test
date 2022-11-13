@@ -9,12 +9,6 @@ use Throwable;
 
 class DepositService extends TransactionService
 {
-    public function setAmount(float $amount): DepositService
-    {
-        $this->amount = $amount;
-        return $this;
-    }
-
     /**
      * @throws Throwable
      */
