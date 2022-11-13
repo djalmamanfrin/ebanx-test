@@ -44,4 +44,10 @@ class TransferServiceTest extends TestCase
         $this->expectExceptionMessage($message);
         $this->transfer->hasFound(0);
     }
+
+    public function test_if_has_found_method_return_type_is_boolean()
+    {
+        $amount = 1;
+        $this->assertIsBool($this->transfer->hasFound($amount));
+    }
 }

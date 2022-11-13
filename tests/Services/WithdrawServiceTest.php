@@ -17,7 +17,7 @@ class WithdrawServiceTest extends TestCase
 {
     use DatabaseTransactions, DatabaseMigrations;
 
-    private DepositService $deposit;
+    private WithdrawService $withdraw;
     private Account $account;
 
     public function setUp(): void
@@ -47,7 +47,7 @@ class WithdrawServiceTest extends TestCase
         $this->withdraw->hasFound(0);
     }
 
-    public function test_return_has_found_method_is_boolean()
+    public function test_if_has_found_method_return_type_is_boolean()
     {
         $amount = 1;
         $this->assertIsBool($this->withdraw->hasFound($amount));
