@@ -27,7 +27,7 @@ class DepositServiceTest extends TestCase
 
     public function test_whether_abstract_transaction_service_methods_are_available_in_the_deposit_service()
     {
-        $this->assertTrue(method_exists(DepositService::class, 'isTheMinimumAllowed'));
+        $this->assertTrue(method_exists(DepositService::class, 'checkingMinimumAllowed'));
         $this->assertTrue(method_exists(DepositService::class, 'setAmount'));
         $this->assertTrue(method_exists(DepositService::class, 'persist'));
     }
@@ -63,7 +63,7 @@ class DepositServiceTest extends TestCase
     public function test_error_in_depositing_value_is_equal_zero()
     {
         $this->expectException(InvalidArgumentException::class);
-        $message = "The deposit amount informed must be greater than or equal to" . TransactionService::MINIMUM_ALLOWED_VALUE;
+        $message = "The amount informed must be greater than or equal to" . TransactionService::MINIMUM_ALLOWED_VALUE;
         $this->expectExceptionMessage($message);
         $this->deposit
             ->setAmount(0)

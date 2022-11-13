@@ -24,9 +24,17 @@ abstract class TransactionService
         $this->amount = 0;
     }
 
-    protected function isTheMinimumAllowed(float $amount): bool
+    private function isTheMinimumAllowed(float $amount): bool
     {
         return $amount >= self::MINIMUM_ALLOWED_VALUE;
+    }
+
+    public function checkingMinimumAllowed(float $amount): void
+    {
+        if (!$this->isTheMinimumAllowed($amount)) {
+            $message = "The amount informed must be greater than or equal to" . self::MINIMUM_ALLOWED_VALUE;
+            throw new InvalidArgumentException($message);
+        }
     }
 
     public function setAmount(float $amount): TransactionService
@@ -41,11 +49,7 @@ abstract class TransactionService
     public function persist(): bool
     {
         $amount = $this->amount;
-        if (!$this->isTheMinimumAllowed($amount)) {
-            $message = "The deposit amount informed must be greater than or equal to" . self::MINIMUM_ALLOWED_VALUE;
-            throw new InvalidArgumentException($message);
-        }
-
+        $this->checkingMinimumAllowed($amount);
         try {
             DB::beginTransaction();
             if (is_null($this->account->id)) {
