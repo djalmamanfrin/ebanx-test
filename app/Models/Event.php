@@ -10,7 +10,8 @@ use InvalidArgumentException;
  * @package App\Models
  *
  * @property-read int $id
- * @property-read  int $amount
+ * @property-read  float $amount
+ * @property-read  int $origin
  */
 class Event extends Model
 {
