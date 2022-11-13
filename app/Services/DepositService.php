@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 use Throwable;
 
-class DepositService
+class DepositService extends TransactionService
 {
     const MINIMUM_ALLOWED_VALUE = 1;
 
