@@ -53,22 +53,22 @@ class WithdrawServiceTest extends TestCase
         $this->assertIsBool($this->withdraw->hasFound($amount));
     }
 
-    public function test_whether_has_found_method_return_false_when_amount_greater_than_balance()
+    public function test_if_has_found_method_return_false_when_amount_greater_than_minimum_allowed()
     {
         $amount = 1;
         $this->assertFalse($this->withdraw->hasFound($amount));
     }
 
-    public function test_whether_has_found_method_return_true_when_amount_less_than_balance()
+    public function test_if_has_found_method_return_true_when_amount_less_than_minimum_allowed()
     {
         $amount = 8;
-        $event = Event::factory()->create(['type' => 'deposit', 'origin' => $this->account->id]);
+        $event = Event::factory()->create(['type' => TypesEnum::deposit(), 'origin' => $this->account->id]);
         $deposit = new DepositService($this->account, $event);
         $deposit->persist();
         $this->assertTrue($this->withdraw->hasFound($amount));
     }
 
-    public function test_whether_has_found_method_return_true_when_amount_equal_to_balance()
+    public function test_if_has_found_method_return_true_when_amount_equal_to_minimum_allowed()
     {
         $amount = 10;
         $event = Event::factory()->create(['type' => TypesEnum::deposit(), 'origin' => $this->account->id]);

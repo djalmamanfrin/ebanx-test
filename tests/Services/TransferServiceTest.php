@@ -2,8 +2,10 @@
 
 namespace Tests\Services;
 
+use App\Enums\TypesEnum;
 use App\Models\Account;
 use App\Models\Event;
+use App\Services\DepositService;
 use App\Services\TransactionService;
 use App\Services\TransferService;
 use InvalidArgumentException;
@@ -32,7 +34,7 @@ class TransferServiceTest extends TestCase
         $this->assertTrue(method_exists(TransferService::class, 'persist'));
     }
 
-    public function test_whether_has_found_method_is_available_in_the_withdraw_service()
+    public function test_whether_has_found_method_is_available_in_the_transfer_service()
     {
         $this->assertTrue(method_exists(TransferService::class, 'hasFound'));
     }
@@ -49,5 +51,29 @@ class TransferServiceTest extends TestCase
     {
         $amount = 1;
         $this->assertIsBool($this->transfer->hasFound($amount));
+    }
+
+    public function test_if_has_found_method_return_false_when_amount_greater_than_minimum_allowed()
+    {
+        $amount = 1;
+        $this->assertFalse($this->transfer->hasFound($amount));
+    }
+
+    public function test_if_has_found_method_return_true_when_amount_less_than_minimum_allowed()
+    {
+        $amount = 8;
+        $event = Event::factory()->create(['type' => TypesEnum::deposit(), 'origin' => $this->account->id]);
+        $deposit = new DepositService($this->account, $event);
+        $deposit->persist();
+        $this->assertTrue($this->transfer->hasFound($amount));
+    }
+
+    public function test_if_has_found_method_return_true_when_amount_equal_to_minimum_allowed()
+    {
+        $amount = 10;
+        $event = Event::factory()->create(['type' => TypesEnum::deposit(), 'origin' => $this->account->id]);
+        $deposit = new DepositService($this->account, $event);
+        $deposit->persist();
+        $this->assertTrue($this->transfer->hasFound($amount));
     }
 }
