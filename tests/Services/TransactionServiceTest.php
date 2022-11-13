@@ -17,5 +17,6 @@ class TransactionServiceTest extends TestCase
     {
         $this->assertTrue(method_exists(TransactionService::class, 'isTheMinimumAllowed'));
         $this->assertTrue(method_exists(TransactionService::class, 'setAmount'));
+        $this->assertTrue(method_exists(TransactionService::class, 'persist'));
     }
 }
