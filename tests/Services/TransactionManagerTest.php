@@ -156,4 +156,77 @@ class TransactionManagerTest extends TestCase
         $manager->persist();
         $this->assertEquals(1, $manager->getBalance($accountId));
     }
+
+
+    public function test_expecting_error_to_transfer_amount_without_balance_in_account()
+    {
+        $amount = 25;
+        $this->expectException(InvalidArgumentException::class);
+        $message = "The amount %s informed is greater than balance 0 in account";
+        $this->expectExceptionMessage(sprintf($message, $amount));
+
+        $accountId = Account::factory()->create()->id;
+        $event = Event::factory()->create([
+            'type' => TypesEnum::transfer(),
+            'origin' => $accountId,
+            'amount' => $amount
+        ]);
+        $manager = new TransactionManager($event);
+        $manager->persist();
+    }
+
+    public function test_expecting_success_to_transfer_amount_when_greater_than_balance_in_account()
+    {
+        $transferAmount = 100;
+        $depositAmount = 25;
+
+        $this->expectException(InvalidArgumentException::class);
+        $message = "The amount %s informed is greater than balance %s in account";
+        $this->expectExceptionMessage(sprintf($message, $transferAmount, $depositAmount));
+
+        $accountId = Account::factory()->create()->id;
+        $depositEvent = Event::factory()->create([
+            'type' => TypesEnum::deposit(),
+            'destination' => $accountId,
+            'amount' => $depositAmount
+        ]);
+        $manager = new TransactionManager($depositEvent);
+        $manager->persist();
+
+        $event = Event::factory()->create([
+            'type' => TypesEnum::transfer(),
+            'origin' => $accountId,
+            'amount' => $transferAmount
+        ]);
+        $manager = new TransactionManager($event);
+        $manager->persist();
+        $this->assertEquals(75, $manager->getBalance($accountId));
+    }
+
+    public function test_expecting_success_to_transfer_amount_when_less_than_balance_in_account()
+    {
+        $transferAmount = 25;
+        $depositAmount = 100;
+
+        $DepositAccountId = Account::factory()->create()->id;
+        $depositEvent = Event::factory()->create([
+            'type' => TypesEnum::deposit(),
+            'destination' => $DepositAccountId,
+            'amount' => $depositAmount
+        ]);
+        $manager = new TransactionManager($depositEvent);
+        $manager->persist();
+
+        $transferAccountId = Account::factory()->create()->id;
+        $transferEvent = Event::factory()->create([
+            'type' => TypesEnum::transfer(),
+            'origin' => $DepositAccountId,
+            'destination' => $transferAccountId,
+            'amount' => $transferAmount
+        ]);
+        $manager = new TransactionManager($transferEvent);
+        $manager->persist();
+        $this->assertEquals(75, $manager->getBalance($DepositAccountId));
+        $this->assertEquals(25, $manager->getBalance($transferAccountId));
+    }
 }
