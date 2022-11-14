@@ -18,13 +18,11 @@ return new class extends Migration
             $table->id();
             $table->unsignedInteger('event_id');
             $table->unsignedInteger('account_id');
-            $table->unsignedInteger('type_id');
             $table->float('amount', 10);
             $table->timestamps();
 
             $table->foreign('event_id')->references('id')->on('events');
             $table->foreign('account_id')->references('id')->on('accounts');
-            $table->foreign('type_id')->references('id')->on('types');
         });
     }
 

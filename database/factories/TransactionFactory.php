@@ -27,7 +27,6 @@ class TransactionFactory extends Factory
         return [
             'event_id' => Event::factory()->make()->id,
             'account_id' => Account::factory()->make()->id,
-            'type_id' => $this->faker->numberBetween(1, 3),
             'amount' => $this->faker->numberBetween(10, 100)
         ];
     }
