@@ -37,34 +37,5 @@ abstract class TransactionService
         }
     }
 
-    /**
-     * @throws Throwable
-     */
-    public function persist(): bool
-    {
-        $this->checkingMinimumAllowed();
-        try {
-            DB::beginTransaction();
-            if (is_null($this->account->id)) {
-                $this->account->saveOrFail();
-            }
-
-            if (is_null($this->event->id)) {
-                $this->event->saveOrFail();
-            }
-
-            $attributes = [
-                'type_id' => TypesEnum::DEPOSIT_ID,
-                'account_id' => $this->account->id,
-                'event_id' => $this->event->id,
-                'amount' => $this->amount
-            ];
-            return $this->account->transactions()
-                ->make($attributes)
-                ->saveOrFail();
-        } catch (Throwable $e) {
-            DB::rollBack();
-            throw $e;
-        }
-    }
+    abstract public function persist(): bool;
 }

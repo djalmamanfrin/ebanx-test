@@ -10,7 +10,15 @@ class WithdrawService extends TransactionService
 
     public function persist(): bool
     {
+        $this->checkingMinimumAllowed();
         $this->checkingHasFund();
-        return parent::persist();
+        $attributes = [
+            'account_id' => $this->account->id,
+            'event_id' => $this->event->id,
+            'amount' => $this->amount * -1
+        ];
+        return $this->account->transactions()
+            ->make($attributes)
+            ->saveOrFail();
     }
 }
