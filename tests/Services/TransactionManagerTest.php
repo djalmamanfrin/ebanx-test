@@ -61,10 +61,24 @@ class TransactionManagerTest extends TestCase
         $this->assertInstanceOf(Account::class, $manager->getDestinationAccount());
     }
 
-    public function test_expecting_success_to_deposit_amount_when_account_existing()
+    public function test_expecting_success_to_deposit_amount_when_existing_account()
     {
         $amount = 100;
         $destinationAccountId = Account::factory()->create()->id;
+        $event = Event::factory()->create([
+            'type' => TypesEnum::deposit(),
+            'destination' => $destinationAccountId,
+            'amount' => $amount
+        ]);
+        $manager = new TransactionManager($event);
+        $manager->persist();
+        $this->assertEquals($amount, $manager->getBalance($destinationAccountId));
+    }
+
+    public function test_expecting_success_to_deposit_amount_when_non_existing_account()
+    {
+        $amount = 100;
+        $destinationAccountId = 5;
         $event = Event::factory()->create([
             'type' => TypesEnum::deposit(),
             'destination' => $destinationAccountId,

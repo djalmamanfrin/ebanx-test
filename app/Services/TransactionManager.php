@@ -6,6 +6,7 @@ use App\Enums\TypesEnum;
 use App\Models\Event;
 use App\Models\Account;
 use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
 
@@ -48,7 +49,13 @@ class TransactionManager
      */
     private function deposit(): void
     {
-        $destinationAccount = $this->getDestinationAccount();
+        try {
+            $destinationAccount = $this->getDestinationAccount();
+        } catch (ModelNotFoundException) {
+            $destinationAccount = new Account();
+            $destinationAccount->id = $this->event->destination;
+            $destinationAccount->save();
+        }
         $deposit = new DepositService($destinationAccount, $this->event);
         $isDeposited = $deposit->persist();
         if (!$isDeposited) {
