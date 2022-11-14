@@ -13,6 +13,7 @@ use InvalidArgumentException;
  * @property-read  float $amount
  * @property-read  int $origin
  * @property-read  int $destination
+ * @property-read  string $type
  */
 class Event extends Model
 {
@@ -31,5 +32,10 @@ class Event extends Model
             throw new InvalidArgumentException('Amount not set as float');
         }
         return (float) $amount;
+    }
+
+    public function getOrigin(): Account
+    {
+
     }
 }

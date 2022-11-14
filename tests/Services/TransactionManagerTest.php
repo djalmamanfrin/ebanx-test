@@ -2,10 +2,12 @@
 
 namespace Tests\Services;
 
+use App\Enums\TypesEnum;
 use App\Models\Account;
 use App\Models\Event;
 use App\Services\TransactionManager;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use InvalidArgumentException;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 use Laravel\Lumen\Testing\DatabaseTransactions;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,6 +21,7 @@ class TransactionManagerTest extends TestCase
     {
         $this->assertTrue(method_exists(TransactionManager::class, 'getOriginAccount'));
         $this->assertTrue(method_exists(TransactionManager::class, 'getDestinationAccount'));
+        $this->assertTrue(method_exists(TransactionManager::class, 'persist'));
     }
 
     public function test_expecting_error_in_get_origin_account_method_if_account_non_existing()
@@ -56,5 +59,19 @@ class TransactionManagerTest extends TestCase
         $manager = new TransactionManager($event);
         $this->assertInstanceOf(Account::class, $manager->getOriginAccount());
         $this->assertInstanceOf(Account::class, $manager->getDestinationAccount());
+    }
+
+    public function test_expecting_success_to_deposit_amount_when_account_existing()
+    {
+        $amount = 100;
+        $destinationAccountId = Account::factory()->create()->id;
+        $event = Event::factory()->create([
+            'type' => TypesEnum::deposit(),
+            'destination' => $destinationAccountId,
+            'amount' => $amount
+        ]);
+        $manager = new TransactionManager($event);
+        $manager->persist();
+        $this->assertEquals($amount, $manager->getBalance($destinationAccountId));
     }
 }
