@@ -17,7 +17,7 @@ return new class extends Migration
         Schema::create('events', function (Blueprint $table) {
             $table->id();
             $table->string('type');
-            $table->integer('origin');
+            $table->integer('origin')->nullable();
             $table->integer('destination')->nullable();
             $table->float('amount', 10);
             $table->timestamps();
