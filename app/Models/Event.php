@@ -33,9 +33,4 @@ class Event extends Model
         }
         return (float) $amount;
     }
-
-    public function getOrigin(): Account
-    {
-
-    }
 }

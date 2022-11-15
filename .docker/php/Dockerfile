@@ -45,7 +45,7 @@ RUN pecl install xdebug-3.1.5 && docker-php-ext-enable xdebug \
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-ADD php.ini /usr/local/etc/php/conf.d/php.ini
+ADD php.ini /usr/local/etc/php/php.ini
 
 EXPOSE 9000
 CMD ["php-fpm"]
