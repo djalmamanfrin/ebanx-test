@@ -47,7 +47,7 @@ class TransactionManager
     /**
      * @throws \Throwable
      */
-    private function deposit(): void
+    private function deposit(): array
     {
         try {
             $destinationAccount = $this->getDestinationAccount();
@@ -61,6 +61,12 @@ class TransactionManager
         if (!$isDeposited) {
             throw new Exception("Error to deposit amount");
         }
+        return [
+            'destination' => [
+                'id' => $destinationAccount->id,
+                'balance' => $this->getBalance($destinationAccount->id)
+            ]
+        ];
     }
 
     /**
@@ -95,13 +101,12 @@ class TransactionManager
     /**
      * @throws \Throwable
      */
-    public function persist(): void
+    public function persist(): array
     {
         $type = $this->event->type;
         switch ($type) {
             case TypesEnum::deposit():
-                $this->deposit();
-            break;
+                return $this->deposit();
             case TypesEnum::withdraw():
                 $this->withdraw();
                 break;

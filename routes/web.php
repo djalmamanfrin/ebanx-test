@@ -16,3 +16,6 @@
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
+
+$router->post('/event', ['uses' => 'V1\TransactionController@event']);
+$router->get('/balance', ['uses' => 'TransactionController@balance']);
