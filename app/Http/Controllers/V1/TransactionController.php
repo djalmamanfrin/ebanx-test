@@ -4,25 +4,41 @@ namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\Event;
+use App\Services\AccountService;
 use App\Services\TransactionManager;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Throwable;
 
 class TransactionController extends Controller
 {
-    public function event(Request $request): JsonResponse
+    private TransactionManager $manager;
+
+    public function __construct()
     {
-        $payload = $request->all();
-        $event = new Event($payload);
-        $event->save();
-        $manager = new TransactionManager($event);
-        return response()->json($manager->persist(), Response::HTTP_CREATED);
+        $this->manager = app(TransactionManager::class);
     }
 
-    public function balance(Request $request, int $accountId): JsonResponse
+    public function event(Request $request): JsonResponse
     {
-        $payload = $request->all();
-        return response()->json();
+        try {
+            $payload = $request->all();
+            $response = $this->manager->persist($payload);
+            return response()->json($response, Response::HTTP_CREATED);
+        } catch (Throwable) {
+            return response()->json(0, Response::HTTP_NOT_FOUND);
+        }
+    }
+
+    public function balance(Request $request): JsonResponse
+    {
+        try {
+            $accountId = $request->get('account_id');
+            $balance = $this->manager->getBalance($accountId);
+            return response()->json($balance, Response::HTTP_OK);
+        } catch (Throwable) {
+            return response()->json(0, Response::HTTP_NOT_FOUND);
+        }
     }
 }

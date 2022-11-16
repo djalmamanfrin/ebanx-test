@@ -18,4 +18,4 @@ $router->get('/', function () use ($router) {
 });
 
 $router->post('/event', ['uses' => 'V1\TransactionController@event']);
-$router->get('/balance', ['uses' => 'TransactionController@balance']);
+$router->get('/balance[{accountId}]', ['uses' => 'V1\TransactionController@balance']);
