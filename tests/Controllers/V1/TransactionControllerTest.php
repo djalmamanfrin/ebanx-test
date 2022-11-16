@@ -7,6 +7,7 @@ use App\Http\Controllers\V1\TransactionController;
 use App\Models\Account;
 use App\Models\Event;
 use App\Services\TransactionManager;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 use Laravel\Lumen\Testing\DatabaseTransactions;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,6 +21,24 @@ class TransactionControllerTest extends TestCase
     {
         $this->assertTrue(method_exists(TransactionController::class, 'event'));
         $this->assertTrue(method_exists(TransactionController::class, 'balance'));
+    }
+
+    public function test_reset()
+    {
+        $amount = 5;
+        $accountId = 100;
+        $manager = new TransactionManager();
+        $manager->persist(['type' => TypesEnum::deposit(), 'destination' => $accountId, 'amount' => $amount]);
+        $this->assertEquals($amount, $manager->getBalance($accountId));
+
+        $response = $this
+            ->call('POST', "/reset");
+        $response->assertExactJson(["OK"]);
+        $response->assertStatus(Response::HTTP_OK);
+
+        $this->expectException(ModelNotFoundException::class);
+        $this->expectExceptionMessage("Account {$accountId} not found");
+        $manager->getBalance($accountId);
     }
 
     public function test_create_account_with_initial_balance()

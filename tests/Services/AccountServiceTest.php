@@ -22,7 +22,7 @@ class AccountServiceTest extends TestCase
     public function test_return_get_balance_method_must_be_int()
     {
         $account = new Account();
-        $this->assertIsInt($account->getBalance());
+        $this->assertIsFloat($account->getBalance());
     }
 
     public function test_exception_if_account_not_found()
