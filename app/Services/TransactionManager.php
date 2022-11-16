@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Enums\TypesEnum;
 use App\Models\Event;
 use App\Models\Account;
+use App\Models\Transaction;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
@@ -14,6 +15,13 @@ use Throwable;
 class TransactionManager
 {
     private Event $event;
+
+    public function reset(): void
+    {
+        Transaction::query()->truncate();
+        Event::query()->truncate();
+        Account::query()->truncate();
+    }
 
     private function setEvent(array $payload): void
     {

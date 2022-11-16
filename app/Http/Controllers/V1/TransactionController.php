@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
-use App\Models\Event;
-use App\Services\AccountService;
 use App\Services\TransactionManager;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -18,6 +16,12 @@ class TransactionController extends Controller
     public function __construct()
     {
         $this->manager = app(TransactionManager::class);
+    }
+
+    public function reset(): JsonResponse
+    {
+        $this->manager->reset();
+        return response()->json('OK');
     }
 
     public function event(Request $request): JsonResponse
