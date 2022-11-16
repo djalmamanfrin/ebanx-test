@@ -9,14 +9,16 @@ use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
+use Throwable;
 
 class TransactionManager
 {
     private Event $event;
 
-    public function __construct(Event $event)
+    private function setEvent(array $payload): void
     {
-        $this->event = $event;
+        $this->event = new Event($payload);
+        $this->event->save();
     }
 
     private function getAccount(int $accountId): Account
@@ -25,13 +27,13 @@ class TransactionManager
         return $service->get();
     }
 
-    public function getOriginAccount(): Account
+    private function getOriginAccount(): Account
     {
         $originAccountId = $this->event->origin;
         return $this->getAccount($originAccountId);
     }
 
-    public function getDestinationAccount(): Account
+    private function getDestinationAccount(): Account
     {
         $originAccountId = $this->event->destination;
         return $this->getAccount($originAccountId);
@@ -72,7 +74,7 @@ class TransactionManager
     /**
      * @throws \Throwable
      */
-    private function withdraw(): void
+    private function withdraw(): array
     {
         $originAccount = $this->getOriginAccount();
         $withdraw = new WithdrawService($originAccount, $this->event);
@@ -80,41 +82,46 @@ class TransactionManager
         if (!$isWithdrawn) {
             throw new Exception("Error to withdraw amount");
         }
+        return [
+            'origin' => [
+                'id' => $originAccount->id,
+                'balance' => $this->getBalance($originAccount->id)
+            ]
+        ];
     }
 
     /**
      * @throws \Throwable
      */
-    private function transfer(): void
+    private function transfer(): array
+    {
+        $withdraw = $this->withdraw();
+        $deposit = $this->deposit();
+        return array_merge($withdraw, $deposit);
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    public function persist(array $payload): array
     {
         try {
             DB::beginTransaction();
-            $this->withdraw();
-            $this->deposit();
+            $this->setEvent($payload);
+
+            $type = $this->event->type;
+            $response = match ($type) {
+                TypesEnum::deposit() => $this->deposit(),
+                TypesEnum::withdraw() => $this->withdraw(),
+                TypesEnum::transfer() => $this->transfer(),
+                default => throw new NotAcceptableHttpException("Type $type informed not acceptable"),
+            };
+
             DB::commit();
-        } catch (\Throwable $e) {
+            return $response;
+        } catch (Throwable $e) {
             DB::rollBack();
             throw $e;
-        }
-    }
-
-    /**
-     * @throws \Throwable
-     */
-    public function persist(): array
-    {
-        $type = $this->event->type;
-        switch ($type) {
-            case TypesEnum::deposit():
-                return $this->deposit();
-            case TypesEnum::withdraw():
-                $this->withdraw();
-                break;
-            case TypesEnum::transfer():
-                $this->transfer();
-                break;
-            default:
-                throw new NotAcceptableHttpException("Type $type informed not acceptable");
         }
     }
 }
