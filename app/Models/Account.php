@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @package App\Models
+ *
+ * @property int $id
+ */
 class Account extends Model
 {
     use HasFactory;
@@ -17,7 +22,7 @@ class Account extends Model
         return $this->hasMany(Transaction::class);
     }
 
-    public function getBalance(): int
+    public function getBalance(): float
     {
         $transactions = $this->transactions()->get();
         if ($transactions->isEmpty()) {

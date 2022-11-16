@@ -26,45 +26,35 @@ class TransactionManagerTest extends TestCase
 
     public function test_expecting_error_to_withdraw_amount_if_origin_account_non_existing()
     {
-        $destination = 10;
+        $origin = 10;
         $this->expectException(ModelNotFoundException::class);
-        $this->expectExceptionMessage("Account {$destination} not found");
+        $this->expectExceptionMessage("Account {$origin} not found");
         $this->expectExceptionCode(Response::HTTP_UNPROCESSABLE_ENTITY);
 
-        $event = Event::factory()->make([
-            'type' => TypesEnum::withdraw(),
-            'origin' => $destination
-        ])->toArray();
         $manager = new TransactionManager();
-        $manager->persist($event);
+        $manager->persist(['type' => TypesEnum::withdraw(), 'origin' => $origin, 'amount' => 10]);
     }
 
     public function test_expecting_success_to_deposit_amount_when_existing_account()
     {
         $amount = 100;
         $destinationAccountId = Account::factory()->create()->id;
-        $event = Event::factory()->make([
-            'type' => TypesEnum::deposit(),
-            'destination' => $destinationAccountId,
-            'amount' => $amount
-        ])->toArray();
         $manager = new TransactionManager();
-        $manager->persist($event);
+
+
+        $manager->persist(['type' => TypesEnum::deposit(), 'destination' => $destinationAccountId, 'amount' => $amount]);
         $this->assertEquals($amount, $manager->getBalance($destinationAccountId));
     }
 
     public function test_expecting_success_to_deposit_amount_when_non_existing_account()
     {
         $amount = 100;
-        $destinationAccountId = 5;
-        $event = Event::factory()->make([
-            'type' => TypesEnum::deposit(),
-            'destination' => $destinationAccountId,
-            'amount' => $amount
-        ])->toArray();
+        $accountId = 2;
+
         $manager = new TransactionManager();
-        $manager->persist($event);
-        $this->assertEquals($amount, $manager->getBalance($destinationAccountId));
+
+        $manager->persist(['type' => TypesEnum::deposit(), 'destination' => $accountId, 'amount' => $amount]);
+        $this->assertEquals($amount, $manager->getBalance($accountId));
     }
 
     public function test_expecting_error_to_withdraw_amount_without_balance_in_account()
@@ -75,19 +65,15 @@ class TransactionManagerTest extends TestCase
         $this->expectExceptionMessage(sprintf($message, $amount));
 
         $originAccountId = Account::factory()->create()->id;
-        $depositEvent = Event::factory()->make([
-            'type' => TypesEnum::withdraw(),
-            'origin' => $originAccountId,
-            'amount' => $amount
-        ])->toArray();
         $manager = new TransactionManager();
-        $manager->persist($depositEvent);
+        $manager->persist(['type' => TypesEnum::withdraw(), 'origin' => $originAccountId, 'amount' => $amount]);
     }
 
     public function test_expecting_error_to_withdraw_amount_when_greater_than_balance_in_account()
     {
         $withdrawAmount = 100;
         $depositAmount = 10;
+        $accountId = 2;
 
         $this->expectException(InvalidArgumentException::class);
         $message = "The amount %s informed is greater than balance %s in account";
@@ -95,42 +81,24 @@ class TransactionManagerTest extends TestCase
 
         $manager = new TransactionManager();
 
-        $accountId = Account::factory()->create()->id;
-        $depositEvent = Event::factory()->make([
-            'type' => TypesEnum::deposit(),
-            'destination' => $accountId,
-            'amount' => $depositAmount
-        ])->toArray();
-        $manager->persist($depositEvent);
+        $manager->persist(['type' => TypesEnum::deposit(), 'destination' => $accountId, 'amount' => $depositAmount]);
+        $this->assertEquals($depositAmount, $manager->getBalance($accountId));
 
-        $withdrawEvent = Event::factory()->make([
-            'type' => TypesEnum::withdraw(),
-            'origin' => $accountId,
-            'amount' => $withdrawAmount
-        ])->toArray();
-        $manager->persist($withdrawEvent);
+        $manager->persist(['type' => TypesEnum::withdraw(), 'origin' => $accountId, 'amount' => $withdrawAmount]);
     }
 
     public function test_expecting_success_to_withdraw_amount_when_less_than_balance_in_account()
     {
         $withdrawAmount = 99;
         $depositAmount = 100;
+        $accountId = 100;
+
         $manager = new TransactionManager();
 
-        $accountId = Account::factory()->create()->id;
-        $depositEvent = Event::factory()->make([
-            'type' => TypesEnum::deposit(),
-            'destination' => $accountId,
-            'amount' => $depositAmount
-        ])->toArray();
-        $manager->persist($depositEvent);
+        $manager->persist(['type' => TypesEnum::deposit(), 'destination' => $accountId, 'amount' => $depositAmount]);
+        $this->assertEquals($depositAmount, $manager->getBalance($accountId));
 
-        $withdrawEvent = Event::factory()->make([
-            'type' => TypesEnum::withdraw(),
-            'origin' => $accountId,
-            'amount' => $withdrawAmount
-        ])->toArray();
-        $manager->persist($withdrawEvent);
+        $manager->persist(['type' => TypesEnum::withdraw(), 'origin' => $accountId, 'amount' => $withdrawAmount]);
         $this->assertEquals(1, $manager->getBalance($accountId));
     }
 
@@ -143,16 +111,11 @@ class TransactionManagerTest extends TestCase
         $this->expectExceptionMessage(sprintf($message, $amount));
 
         $accountId = Account::factory()->create()->id;
-        $event = Event::factory()->make([
-            'type' => TypesEnum::transfer(),
-            'origin' => $accountId,
-            'amount' => $amount
-        ])->toArray();
         $manager = new TransactionManager();
-        $manager->persist($event);
+        $manager->persist(['type' => TypesEnum::transfer(), 'origin' => $accountId, 'destination' => 200, 'amount' => $amount]);
     }
 
-    public function test_expecting_success_to_transfer_amount_when_greater_than_balance_in_account()
+    public function test_expecting_error_to_transfer_amount_when_greater_than_balance_in_account()
     {
         $transferAmount = 100;
         $depositAmount = 25;
@@ -162,47 +125,24 @@ class TransactionManagerTest extends TestCase
         $this->expectExceptionMessage(sprintf($message, $transferAmount, $depositAmount));
 
         $manager = new TransactionManager();
+        $manager->persist(['type' => TypesEnum::deposit(), 'destination' => 100, 'amount' => $depositAmount]);
+        $this->assertEquals($depositAmount, $manager->getBalance(100));
 
-        $accountId = Account::factory()->create()->id;
-        $depositEvent = Event::factory()->make([
-            'type' => TypesEnum::deposit(),
-            'destination' => $accountId,
-            'amount' => $depositAmount
-        ])->toArray();
-        $manager->persist($depositEvent);
-
-        $transferEvent = Event::factory()->make([
-            'type' => TypesEnum::transfer(),
-            'origin' => $accountId,
-            'amount' => $transferAmount
-        ])->toArray();;
-        $manager->persist($transferEvent);
-        $this->assertEquals(75, $manager->getBalance($accountId));
+        $manager->persist(['type' => TypesEnum::transfer(), 'origin' => 100, 'destination' => 200, 'amount' => $transferAmount]);
     }
 
     public function test_expecting_success_to_transfer_amount_when_less_than_balance_in_account()
     {
-        $transferAmount = 25;
-        $depositAmount = 100;
         $manager = new TransactionManager();
 
-        $DepositAccountId = Account::factory()->create()->id;
-        $depositEvent = Event::factory()->make([
-            'type' => TypesEnum::deposit(),
-            'destination' => $DepositAccountId,
-            'amount' => $depositAmount
-        ])->toArray();
-        $manager->persist($depositEvent);
+        $manager->persist(['type' => TypesEnum::deposit(), 'destination' => 100, 'amount' => 100]);
+        $this->assertEquals(100, $manager->getBalance(100));
 
-        $transferAccountId = Account::factory()->create()->id;
-        $transferEvent = Event::factory()->make([
-            'type' => TypesEnum::transfer(),
-            'origin' => $DepositAccountId,
-            'destination' => $transferAccountId,
-            'amount' => $transferAmount
-        ])->toArray();
-        $manager->persist($transferEvent);
-        $this->assertEquals(75, $manager->getBalance($DepositAccountId));
-        $this->assertEquals(25, $manager->getBalance($transferAccountId));
+        $manager->persist(['type' => TypesEnum::withdraw(), 'origin' => 100, 'amount' => 75]);
+        $this->assertEquals(25, $manager->getBalance(100));
+
+        $manager->persist(['type' => TypesEnum::transfer(), 'origin' => 100, 'destination' => 200, 'amount' => 10]);
+        $this->assertEquals(15, $manager->getBalance(100));
+        $this->assertEquals(10, $manager->getBalance(200));
     }
 }
